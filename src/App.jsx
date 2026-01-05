@@ -1,0 +1,577 @@
+import React, { useState, useEffect, useCallback } from 'react'
+
+const galleryPhotos = {
+  autor: ["https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=800&q=80", "https://images.unsplash.com/photo-1552168324-d612d77725e3?w=800&q=80", "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800&q=80", "https://images.unsplash.com/photo-1502982720700-bfff97f2ecac?w=800&q=80", "https://images.unsplash.com/photo-1554048612-b6a482bc67e5?w=800&q=80", "https://images.unsplash.com/photo-1471341971476-ae15ff5dd4ea?w=800&q=80", "https://images.unsplash.com/photo-1500051638674-ff996a0ec29e?w=800&q=80", "https://images.unsplash.com/photo-1493863641943-9b68992a8d07?w=800&q=80"],
+  paisajes: ["https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80", "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&q=80", "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&q=80", "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=800&q=80", "https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=800&q=80", "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&q=80", "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&q=80", "https://images.unsplash.com/photo-1465056836041-7f43ac27dcb5?w=800&q=80"],
+  deporte: ["https://images.unsplash.com/photo-1461896836934-28e4a8e8e618?w=800&q=80", "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=800&q=80", "https://images.unsplash.com/photo-1530549387789-4c1017266635?w=800&q=80", "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=800&q=80", "https://images.unsplash.com/photo-1486218119243-13883505764c?w=800&q=80", "https://images.unsplash.com/photo-1541252260730-0412e8e2108e?w=800&q=80", "https://images.unsplash.com/photo-1471295253337-3ceaaedca402?w=800&q=80", "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=800&q=80"],
+  h2o: ["https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=800&q=80", "https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=800&q=80", "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=800&q=80", "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80", "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&q=80", "https://images.unsplash.com/photo-1471922694854-ff1b63b20054?w=800&q=80", "https://images.unsplash.com/photo-1468413253725-0d5181091126?w=800&q=80", "https://images.unsplash.com/photo-1484291470158-b8f8d608850d?w=800&q=80"],
+  flora: ["https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=800&q=80", "https://images.unsplash.com/photo-1462275646964-a0e3571f4f83?w=800&q=80", "https://images.unsplash.com/photo-1457530378978-8bac673b8062?w=800&q=80", "https://images.unsplash.com/photo-1487530811176-3780de880c2d?w=800&q=80", "https://images.unsplash.com/photo-1518882605630-8eb5f0420c4b?w=800&q=80", "https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=800&q=80", "https://images.unsplash.com/photo-1509223197845-458d87a6c1a4?w=800&q=80", "https://images.unsplash.com/photo-1508610048659-a06b669e3321?w=800&q=80"],
+  modelos: ["https://images.unsplash.com/photo-1509631179647-0177331693ae?w=800&q=80", "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800&q=80", "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&q=80", "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&q=80", "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=800&q=80", "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=800&q=80", "https://images.unsplash.com/photo-1514315384763-ba401779410f?w=800&q=80", "https://images.unsplash.com/photo-1504703395950-b89145a5425b?w=800&q=80"],
+  animales: ["https://images.unsplash.com/photo-1474511320723-9a56873571b7?w=800&q=80", "https://images.unsplash.com/photo-1437622368342-7a3d73a34c8f?w=800&q=80", "https://images.unsplash.com/photo-1484406566174-9da000fda645?w=800&q=80", "https://images.unsplash.com/photo-1425082661705-1834bfd09dca?w=800&q=80", "https://images.unsplash.com/photo-1474314170901-f351b68f544f?w=800&q=80", "https://images.unsplash.com/photo-1452857297128-d9c29adba80b?w=800&q=80", "https://images.unsplash.com/photo-1517849845537-4d257902454a?w=800&q=80", "https://images.unsplash.com/photo-1425082661705-1834bfd09dca?w=800&q=80"],
+  grabados: ["https://images.unsplash.com/photo-1579762715118-a6f1d4b934f1?w=800&q=80", "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=800&q=80", "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=800&q=80", "https://images.unsplash.com/photo-1544967082-d9d25d867d66?w=800&q=80", "https://images.unsplash.com/photo-1549289524-06cf8837ace5?w=800&q=80", "https://images.unsplash.com/photo-1578301978018-3005759f48f7?w=800&q=80", "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=800&q=80", "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=800&q=80"],
+  montajes: ["https://images.unsplash.com/photo-1561998338-13ad7883b20f?w=800&q=80", "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800&q=80", "https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?w=800&q=80", "https://images.unsplash.com/photo-1549490349-8643362247b5?w=800&q=80", "https://images.unsplash.com/photo-1515405295579-ba7b45403062?w=800&q=80", "https://images.unsplash.com/photo-1557672172-298e090bd0f1?w=800&q=80", "https://images.unsplash.com/photo-1574169208507-84376144848b?w=800&q=80", "https://images.unsplash.com/photo-1567359781514-3b964e2b04d6?w=800&q=80"],
+  arquitectura: ["https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80", "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?w=800&q=80", "https://images.unsplash.com/photo-1481277542470-605612bd2d61?w=800&q=80", "https://images.unsplash.com/photo-1448630360428-65456885c650?w=800&q=80", "https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=800&q=80", "https://images.unsplash.com/photo-1431576901776-e539bd916ba2?w=800&q=80", "https://images.unsplash.com/photo-1449157291145-7efd050a4d0e?w=800&q=80", "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=800&q=80"],
+  miradas: ["https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80", "https://images.unsplash.com/photo-1504257432389-52343af06ae3?w=800&q=80", "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=800&q=80", "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800&q=80", "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=800&q=80", "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&q=80", "https://images.unsplash.com/photo-1552058544-f2b08422138a?w=800&q=80", "https://images.unsplash.com/photo-1499996860823-5f82763f2bfe?w=800&q=80"],
+  otras: ["https://images.unsplash.com/photo-1493863641943-9b68992a8d07?w=800&q=80", "https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=800&q=80", "https://images.unsplash.com/photo-1504275107627-0c2ba7a43dba?w=800&q=80", "https://images.unsplash.com/photo-1482160549825-59d1b23cb208?w=800&q=80", "https://images.unsplash.com/photo-1485550409059-9afb054cada4?w=800&q=80", "https://images.unsplash.com/photo-1459411552884-841db9b3cc2a?w=800&q=80", "https://images.unsplash.com/photo-1504198453319-5ce911bafcde?w=800&q=80", "https://images.unsplash.com/photo-1518639192441-8fce0a366e2e?w=800&q=80"],
+  desnudo: ["https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=800&q=80", "https://images.unsplash.com/photo-1504439904031-93ded9f93e4e?w=800&q=80", "https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=800&q=80", "https://images.unsplash.com/photo-1526510747491-58f928ec870f?w=800&q=80", "https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?w=800&q=80", "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&q=80", "https://images.unsplash.com/photo-1496440737103-cd596325d314?w=800&q=80", "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=800&q=80"],
+  urbex: ["https://images.unsplash.com/photo-1518893494013-4c37e0d8e6e3?w=800&q=80", "https://images.unsplash.com/photo-1509644851169-2acc08aa25b5?w=800&q=80", "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80", "https://images.unsplash.com/photo-1494972308805-463bc619d34e?w=800&q=80", "https://images.unsplash.com/photo-1520466809213-7b9a56adcd45?w=800&q=80", "https://images.unsplash.com/photo-1487088678257-3a541e6e3922?w=800&q=80", "https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=800&q=80", "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?w=800&q=80"],
+  "paisajes-maritimos": ["https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=800&q=80", "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80", "https://images.unsplash.com/photo-1471922694854-ff1b63b20054?w=800&q=80", "https://images.unsplash.com/photo-1468413253725-0d5181091126?w=800&q=80", "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&q=80", "https://images.unsplash.com/photo-1484291470158-b8f8d608850d?w=800&q=80", "https://images.unsplash.com/photo-1476673160081-cf065ac3b7ae?w=800&q=80", "https://images.unsplash.com/photo-1506953823976-52e1fdc0149a?w=800&q=80"],
+  "arquitectura-cantabra": ["https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=80", "https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=800&q=80", "https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?w=800&q=80", "https://images.unsplash.com/photo-1449844908441-8829872d2607?w=800&q=80", "https://images.unsplash.com/photo-1430285561322-7808604715df?w=800&q=80", "https://images.unsplash.com/photo-1416331108676-a22ccb276e35?w=800&q=80", "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80", "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&q=80"],
+  "aves-maritimas": ["https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=800&q=80", "https://images.unsplash.com/photo-1480044965905-02098d419e96?w=800&q=80", "https://images.unsplash.com/photo-1444464666168-49d633b86797?w=800&q=80", "https://images.unsplash.com/photo-1470114716159-e389f8712fda?w=800&q=80", "https://images.unsplash.com/photo-1551085254-e96b210db58a?w=800&q=80", "https://images.unsplash.com/photo-1555169062-013468b47731?w=800&q=80", "https://images.unsplash.com/photo-1559827291-72ee739d0d9a?w=800&q=80", "https://images.unsplash.com/photo-1522926193341-e9ffd686c60f?w=800&q=80"],
+  "mundo-macro": ["https://images.unsplash.com/photo-1550159930-40066082a4fc?w=800&q=80", "https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=800&q=80", "https://images.unsplash.com/photo-1518882605630-8eb5f0420c4b?w=800&q=80", "https://images.unsplash.com/photo-1500595046743-cd271d694e30?w=800&q=80", "https://images.unsplash.com/photo-1471879832106-c7ab9e0cee23?w=800&q=80", "https://images.unsplash.com/photo-1518895312237-a9e23508077d?w=800&q=80", "https://images.unsplash.com/photo-1533048324814-79b0a31982f1?w=800&q=80", "https://images.unsplash.com/photo-1591382386627-349b692688ff?w=800&q=80"],
+  "cielos": ["https://images.unsplash.com/photo-1534088568595-a066f410bcda?w=800&q=80", "https://images.unsplash.com/photo-1517483000871-1dbf64a6e1c6?w=800&q=80", "https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=800&q=80", "https://images.unsplash.com/photo-1534088568595-a066f410bcda?w=800&q=80", "https://images.unsplash.com/photo-1501630834273-4b5604d2ee31?w=800&q=80", "https://images.unsplash.com/photo-1536514498073-50e69d39c6cf?w=800&q=80", "https://images.unsplash.com/photo-1503256207526-0d5d80fa2f47?w=800&q=80", "https://images.unsplash.com/photo-1505533321630-975218a5f66f?w=800&q=80"],
+  "paisajes-cantabros": ["https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&q=80", "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80", "https://images.unsplash.com/photo-1418065460487-3e41a6c84dc5?w=800&q=80", "https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=800&q=80", "https://images.unsplash.com/photo-1446329813274-7c9036bd9a1f?w=800&q=80", "https://images.unsplash.com/photo-1508193638397-1c4234db14d8?w=800&q=80", "https://images.unsplash.com/photo-1475924156734-496f6cac6ec1?w=800&q=80", "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=800&q=80"],
+  "rios": ["https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=800&q=80", "https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=800&q=80", "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=800&q=80", "https://images.unsplash.com/photo-1444464666168-49d633b86797?w=800&q=80", "https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?w=800&q=80", "https://images.unsplash.com/photo-1418065460487-3e41a6c84dc5?w=800&q=80", "https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=800&q=80", "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&q=80"]
+}
+
+const siteData = {
+  contact: { phone: "638 548 333", email: "fotografosuspiros@hotmail.es", location: "Santander, Cantabria", hours: "L-V 9:00 - 15:00" },
+  mainMenu: [
+    { id: "inicio", label: "Inicio" },
+    { id: "galeria", label: "Galería", hasSubmenu: true },
+    { id: "servicios", label: "Servicios", hasSubmenu: true },
+    { id: "nosotros", label: "Nosotros", hasSubmenu: true },
+    { id: "tienda", label: "Tienda" },
+    { id: "contacto", label: "Contacto" }
+  ],
+  featuredPhotos: ["https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80", "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&q=80", "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&q=80", "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&q=80", "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=800&q=80", "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800&q=80", "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&q=80", "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&q=80"],
+  galerias: [
+    { id: "autor", label: "Autor", image: "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=600&q=80" },
+    { id: "cantabria", label: "Cantabria", hasSubmenu: true, image: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=600&q=80" },
+    { id: "paisajes", label: "Paisajes", image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80" },
+    { id: "deporte", label: "Deporte", image: "https://images.unsplash.com/photo-1461896836934-28e4a8e8e618?w=600&q=80" },
+    { id: "h2o", label: "H2O", image: "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=600&q=80" },
+    { id: "flora", label: "Flora", image: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=600&q=80" },
+    { id: "modelos", label: "Modelos", image: "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=600&q=80" },
+    { id: "animales", label: "Animales", image: "https://images.unsplash.com/photo-1474511320723-9a56873571b7?w=600&q=80" },
+    { id: "grabados", label: "Grabados", image: "https://images.unsplash.com/photo-1579762715118-a6f1d4b934f1?w=600&q=80" },
+    { id: "montajes", label: "Montajes", image: "https://images.unsplash.com/photo-1561998338-13ad7883b20f?w=600&q=80" },
+    { id: "arquitectura", label: "Arquitectura", image: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=600&q=80" },
+    { id: "miradas", label: "Miradas", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80" },
+    { id: "otras", label: "Otras", image: "https://images.unsplash.com/photo-1493863641943-9b68992a8d07?w=600&q=80" },
+    { id: "desnudo", label: "Desnudo", image: "https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=600&q=80" },
+    { id: "urbex", label: "Urbex", image: "https://images.unsplash.com/photo-1518893494013-4c37e0d8e6e3?w=600&q=80" }
+  ],
+  cantabria: [
+    { id: "paisajes-maritimos", label: "Paisajes Marítimos", image: "https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=600&q=80" },
+    { id: "arquitectura-cantabra", label: "Arquitectura Cántabra", image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&q=80" },
+    { id: "aves-maritimas", label: "Aves Marítimas", image: "https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=600&q=80" },
+    { id: "mundo-macro", label: "Mundo Macro", image: "https://images.unsplash.com/photo-1550159930-40066082a4fc?w=600&q=80" },
+    { id: "cielos", label: "Cielos Cántabros", image: "https://images.unsplash.com/photo-1534088568595-a066f410bcda?w=600&q=80" },
+    { id: "paisajes-cantabros", label: "Paisajes Cántabros", image: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=600&q=80" },
+    { id: "rios", label: "Desde Ríos", image: "https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=600&q=80" }
+  ],
+  servicios: [
+    { id: "fotografos", label: "Para Fotógrafos", image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=600&q=80", desc: "Formación, talleres y cursos" },
+    { id: "modelos-srv", label: "Para Modelos", image: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=600&q=80", desc: "Books profesionales" },
+    { id: "familia", label: "Para Familia", image: "https://images.unsplash.com/photo-1511895426328-dc8714191300?w=600&q=80", desc: "Momentos únicos" },
+    { id: "eventos", label: "Para Eventos", image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&q=80", desc: "Cobertura completa" },
+    { id: "mascotas", label: "Para Mascotas", image: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80", desc: "Retratos con personalidad" },
+    { id: "empresas", label: "Para Empresas", image: "https://images.unsplash.com/photo-1556761175-4b46a572b786?w=600&q=80", desc: "Imagen corporativa" },
+    { id: "musicos", label: "Para Músicos", image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&q=80", desc: "Promoción artística" },
+    { id: "maquillaje", label: "Maquillaje y Peluquería", image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=600&q=80", desc: "Estilismo profesional" }
+  ],
+  nosotros: [
+    { id: "como-trabajamos", label: "Cómo Trabajamos", image: "https://images.unsplash.com/photo-1554048612-b6a482bc67e5?w=600&q=80" },
+    { id: "mi-forma-de-ver", label: "Mi Forma de Ver", image: "https://images.unsplash.com/photo-1471341971476-ae15ff5dd4ea?w=600&q=80" }
+  ],
+  pageContent: {
+    "como-trabajamos": { title: "Cómo Trabajamos", sections: [{ text: "Desde que comenzamos hace más de 15 años, siempre nos tomamos el tiempo necesario para crear la confianza adecuada y captar momentos únicos." }, { text: "Somos perfeccionistas en la edición fotográfica para ofrecerte el mejor resultado posible, sin que esto suponga demoras en la entrega." }, { title: "Primer Paso: Tu primer contacto", text: "En nuestro primer encuentro abordamos todos los temas necesarios para que el trabajo tenga el resultado que mereces." }, { title: "Segundo Paso: El día de la sesión", text: "Tu sesión incluye de 1 a 2 horas de cobertura con cambios ilimitados de vestuario. Tu única obligación será disfrutar." }, { title: "Tercer Paso: La entrega", text: "Después de una semana desde la sesión, te entregamos el material editado en el formato que elijas." }] },
+    "mi-forma-de-ver": { title: "Mi Forma de Ver", sections: [{ text: "Me considero un fotógrafo diferente. Siempre busco lugares nuevos donde realizar las sesiones." }, { text: "Soy de las personas que siempre tiende una mano a quien la necesita. Autodidacta, con un equipo muy cuidado." }, { quote: "...observa con ojos brillantes el mundo entero a tu alrededor, porque los instantes que te marcan en la vida, nosotros los podemos plasmar en una fotografía pensada solo para ti..." }] },
+    "fotografos": { title: "Servicios para Fotógrafos", sections: [{ text: "Servicios pensados para fotógrafos, tanto amateurs como profesionales." }, { title: "Talleres Work Style", text: "Montamos sesiones con modelos profesionales de la temática que necesites." }, { title: "Cursos de Fotografía", list: ["Iniciación a la fotografía digital", "Fotografía en estudio", "Especialización en flora y fauna", "Fotografía de retrato", "Fotografía macro"] }, { title: "Servicio de Exposiciones", text: "Te ayudamos a mostrar tus creaciones." }] },
+    "modelos-srv": { title: "Servicios para Modelos", sections: [{ text: "Servicios pensados para modelos, tanto amateurs como profesionales." }, { title: "Sesión Individual", text: "Brilla como siempre soñaste. Te guiamos en todo lo necesario. Obtendrás 25 fotografías editadas." }, { title: "Book Profesional", text: "Si lo tuyo es el mundo de la moda, te ofrecemos un acabado profesional con 40 fotos editadas." }, { title: "Sesiones Especiales", list: ["Sesión romántica en pareja", "Sesión en lugares abandonados", "Sesión Boudoir", "Desnudo artístico"] }] },
+    "familia": { title: "Servicios para Familia", sections: [{ text: "Momentos únicos que merecen ser inmortalizados." }, { text: "Capturamos la esencia de tu familia en sesiones relajadas y naturales." }, { title: "Incluye", list: ["Sesiones en exterior o estudio", "Cambios de vestuario ilimitados", "Edición profesional", "Entrega en formato digital y/o impreso"] }] },
+    "eventos": { title: "Servicios para Eventos", sections: [{ text: "Cobertura fotográfica profesional para todo tipo de eventos." }, { title: "Servicios", list: ["Bodas y celebraciones", "Eventos corporativos", "Fiestas y reuniones", "Conciertos y espectáculos"] }] },
+    "mascotas": { title: "Servicios para Mascotas", sections: [{ text: "Tu mascota es parte de la familia y merece su propia sesión fotográfica." }, { title: "Opciones", list: ["Sesión individual de mascota", "Sesión mascota con familia", "Sesión en exterior o estudio"] }] },
+    "empresas": { title: "Servicios para Empresas", sections: [{ text: "Imagen corporativa profesional que marca la diferencia." }, { title: "Servicios", list: ["Retratos corporativos", "Fotografía de producto", "Eventos empresariales", "Catálogos y publicidad"] }] },
+    "musicos": { title: "Servicios para Músicos y Artistas", sections: [{ text: "Promoción visual para músicos y artistas de todos los estilos." }, { title: "Servicio para Grupos de Música", text: "Te ofrecemos 20 fotografías editadas con tu banda." }] },
+    "maquillaje": { title: "Maquillaje y Peluquería Profesional", sections: [{ text: "Servicio de estilismo integral para todas nuestras sesiones." }, { title: "Incluye", list: ["Asesoramiento de imagen", "Maquillaje profesional", "Peinado y estilismo", "Retoques durante la sesión"] }] }
+  }
+}
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+  return isMobile
+}
+
+const MenuIcon = () => <svg style={{ width: 24, height: 24 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12h18M3 6h18M3 18h18" /></svg>
+const ChevronRight = () => <svg style={{ width: 14, height: 14 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6" /></svg>
+const ChevronLeft = () => <svg style={{ width: 20, height: 20 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6" /></svg>
+const ArrowLeft = () => <svg style={{ width: 16, height: 16 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
+const CloseIcon = () => <svg style={{ width: 24, height: 24 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
+const PhoneIcon = () => <svg style={{ width: 20, height: 20 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" /></svg>
+const ShutterIcon = ({ size = 24 }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="blade-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#9ca3af" />
+        <stop offset="100%" stopColor="#4b5563" />
+      </linearGradient>
+    </defs>
+
+    <circle cx="50" cy="50" r="48" stroke="url(#blade-grad)" strokeWidth="2.5" />
+
+    <g>
+      {[0, 60, 120, 180, 240, 300].map(angle => (
+        <path
+          key={angle}
+          d="M50 50 L50 10 C65 10 75 20 80 35 L50 50Z"
+          fill="url(#blade-grad)"
+          opacity="0.9"
+          transform={`rotate(${angle} 50 50)`}
+          stroke="#1f2937"
+          strokeWidth="0.5"
+        />
+      ))}
+    </g>
+
+    <circle cx="50" cy="50" r="14" fill="#374151" stroke="#1f2937" strokeWidth="2" />
+    <circle cx="50" cy="50" r="8" fill="#111827" />
+  </svg>
+)
+
+const UserIcon = () => <svg style={{ width: 18, height: 18 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" /></svg>
+const LockIcon = () => <svg style={{ width: 18, height: 18 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0110 0v4" /></svg>
+
+function RotatingPhoto({ photos, interval = 4000 }) {
+  const [current, setCurrent] = useState(0)
+  const [fading, setFading] = useState(false)
+  useEffect(() => {
+    const t = setInterval(() => {
+      setFading(true)
+      setTimeout(() => { setCurrent(p => (p + 1) % photos.length); setFading(false) }, 600)
+    }, interval)
+    return () => clearInterval(t)
+  }, [photos.length, interval])
+  return (
+    <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
+      <img src={photos[current]} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', transition: 'opacity 0.6s', opacity: fading ? 0 : 1 }} />
+    </div>
+  )
+}
+
+function Lightbox({ photos, currentIndex, onClose, onPrev, onNext }) {
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (e.key === 'Escape') onClose()
+      if (e.key === 'ArrowLeft') onPrev()
+      if (e.key === 'ArrowRight') onNext()
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [onClose, onPrev, onNext])
+  return (
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.95)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={onClose}>
+      <button onClick={(e) => { e.stopPropagation(); onClose() }} style={{ position: 'absolute', top: 20, right: 20, background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: 10, zIndex: 1001 }}><CloseIcon /></button>
+      <button onClick={(e) => { e.stopPropagation(); onPrev() }} style={{ position: 'absolute', left: 10, background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', cursor: 'pointer', padding: '20px 15px', borderRadius: 8, zIndex: 1001 }}><ChevronLeft /></button>
+      <img src={photos[currentIndex]} alt="" style={{ maxWidth: '90%', maxHeight: '90%', objectFit: 'contain' }} onClick={e => e.stopPropagation()} />
+      <button onClick={(e) => { e.stopPropagation(); onNext() }} style={{ position: 'absolute', right: 10, background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', cursor: 'pointer', padding: '20px 15px', borderRadius: 8, zIndex: 1001 }}><ChevronRight /></button>
+      <div style={{ position: 'absolute', bottom: 20, color: '#999', fontSize: 14 }}>{currentIndex + 1} / {photos.length}</div>
+    </div>
+  )
+}
+
+function PageContent({ content }) {
+  return (
+    <div>
+      {content.sections.map((section, idx) => (
+        <div key={idx} style={{ marginBottom: 24 }}>
+          {section.title && <h3 style={{ fontFamily: "'Playfair Display',serif", fontSize: 20, marginBottom: 12, color: '#fff' }}>{section.title}</h3>}
+          {section.text && <p style={{ fontSize: 15, lineHeight: 1.8, color: '#d4d4d8', margin: 0 }}>{section.text}</p>}
+          {section.list && (<ul style={{ margin: '12px 0', paddingLeft: 20 }}>{section.list.map((item, i) => <li key={i} style={{ fontSize: 15, lineHeight: 1.8, color: '#d4d4d8', marginBottom: 6 }}>{item}</li>)}</ul>)}
+          {section.quote && (<blockquote style={{ borderLeft: '3px solid #d97706', paddingLeft: 20, margin: '20px 0', fontStyle: 'italic', color: '#a1a1aa', fontSize: 16, lineHeight: 1.8 }}>{section.quote}</blockquote>)}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+export default function App() {
+  const isMobile = useIsMobile()
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [section, setSection] = useState('inicio')
+  const [menuStack, setMenuStack] = useState(['main'])
+  const [cardPage, setCardPage] = useState(0)
+  const [selectedPage, setSelectedPage] = useState(null)
+  const [viewingGallery, setViewingGallery] = useState(null)
+  const [lightbox, setLightbox] = useState({ open: false, index: 0 })
+  const [isNavigatingBack, setIsNavigatingBack] = useState(false)
+  const [currentView, setCurrentView] = useState('public') // 'public', 'login', 'admin'
+
+  const createNavState = useCallback(() => ({
+    section, menuStack: [...menuStack], selectedPage, viewingGallery
+  }), [section, menuStack, selectedPage, viewingGallery])
+
+  useEffect(() => {
+    window.history.replaceState(createNavState(), '', window.location.pathname)
+  }, [])
+
+  useEffect(() => {
+    const handlePopState = (event) => {
+      if (event.state) {
+        setIsNavigatingBack(true)
+        setSection(event.state.section || 'inicio')
+        setMenuStack(event.state.menuStack || ['main'])
+        setSelectedPage(event.state.selectedPage || null)
+        setViewingGallery(event.state.viewingGallery || null)
+        setCardPage(0)
+        setMenuOpen(false)
+        setTimeout(() => setIsNavigatingBack(false), 100)
+      }
+    }
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
+  }, [])
+
+  useEffect(() => {
+    if (!isNavigatingBack) {
+      const state = createNavState()
+      if (section !== 'inicio' || menuStack.length > 1 || selectedPage || viewingGallery) {
+        window.history.pushState(state, '', window.location.pathname)
+      }
+    }
+  }, [section, menuStack, selectedPage, viewingGallery, isNavigatingBack, createNavState])
+
+  const getMenu = () => {
+    const c = menuStack[menuStack.length - 1]
+    if (c === 'galeria') return siteData.galerias
+    if (c === 'cantabria') return siteData.cantabria
+    if (c === 'servicios') return siteData.servicios
+    if (c === 'nosotros') return siteData.nosotros
+    return siteData.mainMenu
+  }
+
+  const getTitle = () => {
+    const c = menuStack[menuStack.length - 1]
+    if (viewingGallery) {
+      const allGalleries = [...siteData.galerias, ...siteData.cantabria]
+      const found = allGalleries.find(g => g.id === viewingGallery)
+      return found ? found.label : null
+    }
+    if (c === 'galeria') return 'Galerías'
+    if (c === 'cantabria') return 'Cantabria'
+    if (c === 'servicios') return 'Servicios'
+    if (c === 'nosotros') return 'Nosotros'
+    return null
+  }
+
+  const handleClick = (item) => {
+    if (galleryPhotos[item.id]) { setViewingGallery(item.id); setSelectedPage(null); setMenuOpen(false); return }
+    if (item.hasSubmenu) { setMenuStack([...menuStack, item.id]); setSection(item.id); setCardPage(0); setSelectedPage(null); setViewingGallery(null) }
+    else if (siteData.pageContent[item.id]) { setSelectedPage(item.id); setSection(item.id); setViewingGallery(null); setMenuOpen(false) }
+    else { setSection(item.id); setSelectedPage(null); setViewingGallery(null); setMenuOpen(false) }
+  }
+
+  const handleBack = () => {
+    if (viewingGallery) { setViewingGallery(null); return }
+    if (selectedPage) { setSelectedPage(null); const parent = menuStack[menuStack.length - 1]; setSection(parent) }
+    else if (menuStack.length > 1) { const ns = menuStack.slice(0, -1); setMenuStack(ns); setSection(ns[ns.length - 1] === 'main' ? 'inicio' : ns[ns.length - 1]); setCardPage(0) }
+  }
+
+  const getCards = () => {
+    if (viewingGallery) return []
+    if (section === 'galeria') return siteData.galerias
+    if (section === 'cantabria') return siteData.cantabria
+    if (section === 'servicios') return siteData.servicios
+    if (section === 'nosotros') return siteData.nosotros
+    return []
+  }
+
+  const cards = getCards()
+  const perPage = isMobile ? 4 : 6
+  const totalPages = Math.ceil(cards.length / perPage)
+  const visible = cards.slice(cardPage * perPage, (cardPage + 1) * perPage)
+
+  const cardClick = (c) => {
+    if (galleryPhotos[c.id]) { setViewingGallery(c.id); return }
+    if (c.hasSubmenu) { setMenuStack([...menuStack, c.id]); setSection(c.id); setCardPage(0) }
+    else if (siteData.pageContent[c.id]) { setSelectedPage(c.id) }
+  }
+
+  const openLightbox = (index) => setLightbox({ open: true, index })
+  const closeLightbox = () => setLightbox({ open: false, index: 0 })
+  const currentGalleryPhotos = viewingGallery ? galleryPhotos[viewingGallery] : []
+  const prevPhoto = () => setLightbox(prev => ({ ...prev, index: (prev.index - 1 + currentGalleryPhotos.length) % currentGalleryPhotos.length }))
+  const nextPhoto = () => setLightbox(prev => ({ ...prev, index: (prev.index + 1) % currentGalleryPhotos.length }))
+
+  const [currentPhotoPage, setCurrentPhotoPage] = useState(0)
+  const photosPerPage = isMobile ? 4 : 8
+  const totalPhotoPages = Math.ceil(currentGalleryPhotos.length / photosPerPage)
+  const visiblePhotos = currentGalleryPhotos.slice(currentPhotoPage * photosPerPage, (currentPhotoPage + 1) * photosPerPage)
+
+  useEffect(() => { setCurrentPhotoPage(0) }, [viewingGallery])
+  useEffect(() => { setCardPage(0) }, [section, isMobile])
+
+  const showCards = cards.length > 0 && !selectedPage && !viewingGallery
+  const showPage = selectedPage && siteData.pageContent[selectedPage]
+  const showGalleryPhotos = viewingGallery && galleryPhotos[viewingGallery]
+
+  if (currentView === 'login') {
+    return <Login onLogin={() => setCurrentView('admin')} onBack={() => setCurrentView('public')} />
+  }
+
+  if (currentView === 'admin') {
+    return <AdminDashboard onLogout={() => setCurrentView('public')} />
+  }
+
+  if (isMobile) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden', background: '#09090b', color: '#fff', fontFamily: "'Inter',sans-serif" }}>
+        {lightbox.open && viewingGallery && <Lightbox photos={currentGalleryPhotos} currentIndex={lightbox.index} onClose={closeLightbox} onPrev={prevPhoto} onNext={nextPhoto} />}
+        <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', background: '#18181b', borderBottom: '1px solid #27272a', position: 'relative', zIndex: 100 }}>
+          <div onClick={() => setMenuOpen(true)} style={{ cursor: 'pointer', padding: 4 }}><MenuIcon /></div>
+          <h1 style={{ fontFamily: "'Playfair Display',serif", fontSize: 18, fontWeight: 500, margin: 0 }}>FotosClick</h1>
+          <a href={"tel:" + siteData.contact.phone.replace(/\s/g, '')} style={{ color: '#d97706', padding: 4 }}><PhoneIcon /></a>
+        </header>
+        {menuOpen && (
+          <div style={{ position: 'fixed', inset: 0, background: '#18181b', zIndex: 200, display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #27272a' }}>
+              <h1 style={{ fontFamily: "'Playfair Display',serif", fontSize: 18, fontWeight: 500, margin: 0 }}>FotosClick</h1>
+              <div onClick={() => setMenuOpen(false)} style={{ cursor: 'pointer', padding: 4 }}><CloseIcon /></div>
+            </div>
+            <nav style={{ flex: 1, padding: 20, overflowY: 'auto' }}>
+              {(menuStack.length > 1 || viewingGallery) && <div onClick={handleBack} style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#71717a', fontSize: 14, marginBottom: 24, cursor: 'pointer' }}><ArrowLeft /><span>Volver</span></div>}
+              {getTitle() && !viewingGallery && <div style={{ fontSize: 12, color: '#52525b', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid #27272a' }}>{getTitle()}</div>}
+              <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+                {getMenu().map(item => (
+                  <li key={item.id} onClick={() => handleClick(item)} style={{ padding: '16px 0', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 16, color: section === item.id ? '#fff' : '#a1a1aa', borderBottom: '1px solid #27272a' }}>
+                    <span>{item.label}</span>
+                    {(item.hasSubmenu || galleryPhotos[item.id]) && <ChevronRight />}
+                  </li>
+                ))}
+              </ul>
+            </nav>
+            <div style={{ padding: 20, borderTop: '1px solid #27272a' }}>
+              <p style={{ color: '#71717a', fontSize: 14, margin: '0 0 4px 0' }}>{siteData.contact.phone}</p>
+              <p style={{ color: '#52525b', fontSize: 14, margin: '0 0 16px 0' }}>{siteData.contact.location}</p>
+              <div onClick={() => { setCurrentView('login'); setMenuOpen(false) }} style={{ fontSize: 11, color: '#3f3f46', cursor: 'pointer', textTransform: 'uppercase', letterSpacing: 1, marginTop: 8 }}>Asociados</div>
+            </div>
+          </div>
+        )}
+        <main style={{ flex: 1, overflow: 'auto' }}>
+          {section === 'inicio' && !viewingGallery && <div style={{ height: '100%' }}><RotatingPhoto photos={siteData.featuredPhotos} interval={4000} /></div>}
+          {section === 'tienda' && !viewingGallery && <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 16, padding: 40, height: '100%' }}><h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: 28, margin: 0 }}>Tienda</h2><p style={{ color: '#71717a' }}>Próximamente disponible</p></div>}
+          {section === 'contacto' && !viewingGallery && (
+            <div style={{ padding: 24 }}>
+              <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: 28, marginBottom: 24 }}>Contacto</h2>
+              <input placeholder="Nombre" style={{ width: '100%', background: '#18181b', border: '1px solid #27272a', borderRadius: 6, padding: '14px 16px', color: '#fff', fontSize: 14, marginBottom: 12, boxSizing: 'border-box' }} />
+              <input placeholder="Teléfono" style={{ width: '100%', background: '#18181b', border: '1px solid #27272a', borderRadius: 6, padding: '14px 16px', color: '#fff', fontSize: 14, marginBottom: 12, boxSizing: 'border-box' }} />
+              <input placeholder="Email" style={{ width: '100%', background: '#18181b', border: '1px solid #27272a', borderRadius: 6, padding: '14px 16px', color: '#fff', fontSize: 14, marginBottom: 12, boxSizing: 'border-box' }} />
+              <select style={{ width: '100%', background: '#18181b', border: '1px solid #27272a', borderRadius: 6, padding: '14px 16px', color: '#a1a1aa', fontSize: 14, marginBottom: 12, boxSizing: 'border-box' }}><option>Tipo de servicio</option>{siteData.servicios.map(s => <option key={s.id}>{s.label}</option>)}</select>
+              <textarea placeholder="Cuéntanos tu proyecto..." style={{ width: '100%', background: '#18181b', border: '1px solid #27272a', borderRadius: 6, padding: '14px 16px', color: '#fff', fontSize: 14, height: 100, resize: 'none', marginBottom: 12, boxSizing: 'border-box' }} />
+              <button style={{ width: '100%', background: '#d97706', color: '#000', padding: '14px', border: 'none', borderRadius: 6, fontSize: 14, fontWeight: 600 }}>Enviar mensaje</button>
+              <div style={{ marginTop: 32, paddingTop: 24, borderTop: '1px solid #27272a' }}><p style={{ color: '#71717a', fontSize: 14, margin: '0 0 8px 0' }}><strong style={{ color: '#fff' }}>Teléfono:</strong> {siteData.contact.phone}</p><p style={{ color: '#71717a', fontSize: 14, margin: '0 0 8px 0' }}><strong style={{ color: '#fff' }}>Email:</strong> {siteData.contact.email}</p><p style={{ color: '#71717a', fontSize: 14, margin: '0 0 8px 0' }}><strong style={{ color: '#fff' }}>Ubicación:</strong> {siteData.contact.location}</p><p style={{ color: '#71717a', fontSize: 14, margin: 0 }}><strong style={{ color: '#fff' }}>Horario:</strong> {siteData.contact.hours}</p></div>
+            </div>
+          )}
+          {showPage && <div style={{ padding: 24 }}><h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: 28, marginBottom: 24 }}>{siteData.pageContent[selectedPage].title}</h2><PageContent content={siteData.pageContent[selectedPage]} /></div>}
+          {showGalleryPhotos && (
+            <div style={{ padding: 20 }}>
+              <div style={{ marginBottom: 20 }}><h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: 24, margin: 0 }}>{getTitle()}</h2><p style={{ color: '#71717a', fontSize: 13, marginTop: 4 }}>{currentGalleryPhotos.length} fotografías</p></div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 8 }}>{visiblePhotos.map((photo, idx) => (<div key={idx} style={{ aspectRatio: '1', borderRadius: 6, overflow: 'hidden', cursor: 'pointer' }} onClick={() => openLightbox(currentPhotoPage * photosPerPage + idx)}><img src={photo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /></div>))}</div>
+              {totalPhotoPages > 1 && <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginTop: 20 }}>{Array.from({ length: totalPhotoPages }).map((_, i) => (<div key={i} onClick={() => setCurrentPhotoPage(i)} style={{ width: i === currentPhotoPage ? 24 : 8, height: 8, borderRadius: 4, background: i === currentPhotoPage ? '#d97706' : '#3f3f46', cursor: 'pointer', transition: 'all 0.3s' }} />))}</div>}
+            </div>
+          )}
+          {showCards && (
+            <div style={{ padding: 20 }}>
+              <div style={{ marginBottom: 20 }}><h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: 24, margin: 0 }}>{getTitle()}</h2><p style={{ color: '#71717a', fontSize: 13, marginTop: 4 }}>{cards.length} {section === 'servicios' ? 'servicios' : 'colecciones'}</p></div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 12 }}>{visible.map(c => (<div key={c.id} onClick={() => cardClick(c)} style={{ aspectRatio: '1', borderRadius: 8, overflow: 'hidden', position: 'relative', cursor: 'pointer' }}><img src={c.image} alt={c.label} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /><div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top,rgba(0,0,0,0.8) 0%,transparent 60%)', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: 12 }}><h3 style={{ fontFamily: "'Playfair Display',serif", fontSize: 14, margin: 0 }}>{c.label}</h3>{c.desc && <p style={{ fontSize: 12, color: '#a1a1aa', marginTop: 6 }}>{c.desc}</p>}{c.hasSubmenu && <p style={{ fontSize: 12, color: '#d97706', marginTop: 6 }}>Ver colección →</p>}</div></div>))}</div>
+              {totalPages > 1 && <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginTop: 20 }}>{Array.from({ length: totalPages }).map((_, i) => (<div key={i} onClick={() => setCardPage(i)} style={{ width: i === cardPage ? 24 : 8, height: 8, borderRadius: 4, background: i === cardPage ? '#d97706' : '#3f3f46', cursor: 'pointer', transition: 'all 0.3s' }} />))}</div>}
+            </div>
+          )}
+        </main>
+      </div>
+    )
+  }
+
+  return (
+    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: '#09090b', color: '#fff', fontFamily: "'Inter',sans-serif" }}>
+      {lightbox.open && viewingGallery && <Lightbox photos={currentGalleryPhotos} currentIndex={lightbox.index} onClose={closeLightbox} onPrev={prevPhoto} onNext={nextPhoto} />}
+      <aside style={{ width: 260, minWidth: 260, background: '#18181b', borderRight: '1px solid #27272a', display: 'flex', flexDirection: 'column', padding: '24px 20px' }}>
+        <div style={{ marginBottom: 32, textAlign: 'center' }}>
+          <h1 style={{ fontFamily: "'Inter', sans-serif", fontSize: 20, fontWeight: 300, letterSpacing: 0.5, margin: 0, color: '#e5e7eb' }}>FotosClick</h1>
+        </div>
+        <nav style={{ flex: 1, overflowY: 'auto' }}>
+          {(menuStack.length > 1 || selectedPage || viewingGallery) && <div onClick={handleBack} style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#71717a', fontSize: 11, marginBottom: 24, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: 1 }}><ArrowLeft /><span>Volver</span></div>}
+          {getTitle() && <div style={{ fontSize: 11, color: '#3f3f46', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid #27272a' }}>{getTitle()}</div>}
+          {!viewingGallery && <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>{getMenu().map(i => (<li key={i.id} style={{ padding: '12px 0', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 14, transition: 'color 0.2s', color: section === i.id || viewingGallery === i.id ? '#fff' : '#71717a' }} onClick={() => handleClick(i)} onMouseEnter={e => e.currentTarget.style.color = '#fff'} onMouseLeave={e => e.currentTarget.style.color = section === i.id || viewingGallery === i.id ? '#fff' : '#71717a'}><span>{i.label}</span>{(i.hasSubmenu || galleryPhotos[i.id]) && <ChevronRight />}</li>))}</ul>}
+        </nav>
+        <div style={{ paddingTop: 16, borderTop: '1px solid #27272a', fontSize: 10, color: '#52525b' }}>
+          <p style={{ margin: '0 0 2px 0', fontSize: 10 }}>{siteData.contact.phone}</p>
+          <p style={{ margin: '0 0 12px 0', fontSize: 10 }}>{siteData.contact.location}</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 0', cursor: 'pointer', color: '#71717a', transition: 'color 0.2s' }} onClick={() => setCurrentView('login')} onMouseEnter={e => e.currentTarget.style.color = '#fff'} onMouseLeave={e => e.currentTarget.style.color = '#71717a'}>
+            <svg style={{ width: 12, height: 12 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0110 0v4" /></svg>
+            <span style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: 1 }}>Asociados</span>
+          </div>
+        </div>
+      </aside>
+      <main style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+        {section === 'inicio' && !viewingGallery && <div style={{ flex: 1, display: 'flex', gap: 4, padding: 4 }}><div style={{ flex: 1 }}><RotatingPhoto photos={siteData.featuredPhotos.slice(0, 4)} interval={4000} /></div><div style={{ flex: 1 }}><RotatingPhoto photos={siteData.featuredPhotos.slice(4, 8)} interval={4500} /></div></div>}
+        {section === 'tienda' && !viewingGallery && <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 16 }}><h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: 32, margin: 0 }}>Tienda</h2><p style={{ color: '#71717a' }}>Próximamente disponible</p></div>}
+        {section === 'contacto' && !viewingGallery && (
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40 }}>
+            <div style={{ width: '100%', maxWidth: 500 }}>
+              <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: 32, marginBottom: 32 }}>Contacto</h2>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}><input placeholder="Nombre" style={{ background: '#18181b', border: '1px solid #27272a', borderRadius: 6, padding: '14px 16px', color: '#fff', fontSize: 14 }} /><input placeholder="Teléfono" style={{ background: '#18181b', border: '1px solid #27272a', borderRadius: 6, padding: '14px 16px', color: '#fff', fontSize: 14 }} /></div>
+              <input placeholder="Email" style={{ width: '100%', background: '#18181b', border: '1px solid #27272a', borderRadius: 6, padding: '14px 16px', color: '#fff', fontSize: 14, marginBottom: 16, boxSizing: 'border-box' }} />
+              <select style={{ width: '100%', background: '#18181b', border: '1px solid #27272a', borderRadius: 6, padding: '14px 16px', color: '#a1a1aa', fontSize: 14, marginBottom: 16 }}><option>Tipo de servicio</option>{siteData.servicios.map(s => <option key={s.id}>{s.label}</option>)}</select>
+              <textarea placeholder="Cuéntanos tu proyecto..." style={{ width: '100%', background: '#18181b', border: '1px solid #27272a', borderRadius: 6, padding: '14px 16px', color: '#fff', fontSize: 14, height: 120, resize: 'none', marginBottom: 16, boxSizing: 'border-box' }} />
+              <button style={{ background: '#d97706', color: '#000', padding: '14px 32px', border: 'none', borderRadius: 6, fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>Enviar mensaje</button>
+              <div style={{ marginTop: 40, paddingTop: 24, borderTop: '1px solid #27272a' }}><p style={{ color: '#71717a', fontSize: 13, margin: '0 0 8px 0' }}><strong style={{ color: '#fff' }}>Teléfono:</strong> {siteData.contact.phone}</p><p style={{ color: '#71717a', fontSize: 13, margin: '0 0 8px 0' }}><strong style={{ color: '#fff' }}>Email:</strong> {siteData.contact.email}</p><p style={{ color: '#71717a', fontSize: 13, margin: '0 0 8px 0' }}><strong style={{ color: '#fff' }}>Ubicación:</strong> {siteData.contact.location}</p><p style={{ color: '#71717a', fontSize: 13, margin: 0 }}><strong style={{ color: '#fff' }}>Horario:</strong> {siteData.contact.hours}</p></div>
+            </div>
+          </div>
+        )}
+        {showPage && <div style={{ flex: 1, padding: '40px 60px', overflowY: 'auto' }}><h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: 36, marginBottom: 24, margin: 0 }}>{siteData.pageContent[selectedPage].title}</h2><div style={{ marginTop: 32 }}><PageContent content={siteData.pageContent[selectedPage]} /></div></div>}
+        {showGalleryPhotos && (
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '32px 40px', overflow: 'hidden' }}>
+            <div style={{ marginBottom: 24 }}><h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: 32, margin: 0 }}>{getTitle()}</h2><p style={{ color: '#71717a', fontSize: 14, marginTop: 8 }}>{currentGalleryPhotos.length} fotografías</p></div>
+            <div style={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'center', minHeight: 0 }}>
+              {currentPhotoPage > 0 && <div onClick={() => setCurrentPhotoPage(p => p - 1)} style={{ position: 'absolute', left: -20, width: 44, height: 44, borderRadius: '50%', background: '#18181b', border: '1px solid #3f3f46', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10 }}><ChevronLeft /></div>}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gridTemplateRows: 'repeat(2,1fr)', gap: 12, width: '100%', height: '100%' }}>{visiblePhotos.map((photo, idx) => (<div key={idx} style={{ borderRadius: 8, overflow: 'hidden', cursor: 'pointer', background: '#27272a' }} onClick={() => openLightbox(currentPhotoPage * photosPerPage + idx)}><img src={photo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s' }} /></div>))}</div>
+              {currentPhotoPage < totalPhotoPages - 1 && <div onClick={() => setCurrentPhotoPage(p => p + 1)} style={{ position: 'absolute', right: -20, width: 44, height: 44, borderRadius: '50%', background: '#18181b', border: '1px solid #3f3f46', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10 }}><ChevronRight /></div>}
+            </div>
+            {totalPhotoPages > 1 && <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginTop: 24 }}>{Array.from({ length: totalPhotoPages }).map((_, i) => (<div key={i} onClick={() => setCurrentPhotoPage(i)} style={{ width: i === currentPhotoPage ? 24 : 8, height: 8, borderRadius: 4, background: i === currentPhotoPage ? '#d97706' : '#3f3f46', cursor: 'pointer', transition: 'all 0.3s' }} />))}</div>}
+          </div>
+        )}
+        {showCards && (
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '32px 40px', overflow: 'hidden' }}>
+            <div style={{ marginBottom: 24 }}><h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: 32, margin: 0 }}>{getTitle()}</h2><p style={{ color: '#71717a', fontSize: 14, marginTop: 8 }}>{cards.length} {section === 'servicios' ? 'servicios disponibles' : 'colecciones'}</p></div>
+            <div style={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'center', minHeight: 0 }}>
+              {cardPage > 0 && <div onClick={() => setCardPage(p => p - 1)} style={{ position: 'absolute', left: -20, width: 44, height: 44, borderRadius: '50%', background: '#18181b', border: '1px solid #3f3f46', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10 }}><ChevronLeft /></div>}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gridTemplateRows: 'repeat(2,1fr)', gap: 16, width: '100%', height: '100%' }}>{visible.map(c => (<div key={c.id} onClick={() => cardClick(c)} style={{ position: 'relative', borderRadius: 8, overflow: 'hidden', cursor: 'pointer', background: '#27272a' }} onMouseEnter={e => e.currentTarget.querySelector('img').style.transform = 'scale(1.05)'} onMouseLeave={e => e.currentTarget.querySelector('img').style.transform = 'scale(1)'}><img src={c.image} alt={c.label} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s' }} /><div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top,rgba(0,0,0,0.85) 0%,rgba(0,0,0,0.2) 40%,transparent 100%)', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: 20 }}><h3 style={{ fontFamily: "'Playfair Display',serif", fontSize: 18, margin: 0 }}>{c.label}</h3>{c.desc && <p style={{ fontSize: 12, color: '#a1a1aa', marginTop: 6 }}>{c.desc}</p>}{c.hasSubmenu && <p style={{ fontSize: 12, color: '#d97706', marginTop: 6 }}>Ver colección →</p>}</div></div>))}</div>
+              {cardPage < totalPages - 1 && <div onClick={() => setCardPage(p => p + 1)} style={{ position: 'absolute', right: -20, width: 44, height: 44, borderRadius: '50%', background: '#18181b', border: '1px solid #3f3f46', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10 }}><ChevronRight /></div>}
+            </div>
+            {totalPages > 1 && <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginTop: 24 }}>{Array.from({ length: totalPages }).map((_, i) => (<div key={i} onClick={() => setCardPage(i)} style={{ width: i === cardPage ? 24 : 8, height: 8, borderRadius: 4, background: i === cardPage ? '#d97706' : '#3f3f46', cursor: 'pointer', transition: 'all 0.3s' }} />))}</div>}
+          </div>
+        )}
+      </main>
+    </div>
+  )
+}
+
+function Login({ onLogin, onBack }) {
+  const [form, setForm] = useState({ user: '', pass: '' })
+  const [error, setError] = useState('')
+
+  const handleLogin = (e) => {
+    e.preventDefault()
+    if (form.user === 'sergio' && form.pass === 'fotosclick2024') {
+      onLogin()
+    } else {
+      setError('Credenciales incorrectas')
+    }
+  }
+
+  return (
+    <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'radial-gradient(circle at center, #27272a 0%, #000000 100%)', fontFamily: "'Inter', sans-serif" }}>
+      <div style={{ width: '100%', maxWidth: 380, padding: '48px 40px', background: '#18181b', borderRadius: 20, border: '1px solid #27272a', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}>
+        <div style={{ textAlign: 'center', marginBottom: 40 }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+            <ShutterIcon size={56} />
+          </div>
+          <h2 style={{ fontSize: 36, fontWeight: 300, margin: 0, color: '#f7fafc', letterSpacing: 0.5 }}>FotosClick</h2>
+        </div>
+
+        <form onSubmit={handleLogin}>
+          <div style={{ marginBottom: 16, position: 'relative' }}>
+            <div style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }}>
+              <UserIcon />
+            </div>
+            <input
+              type="text"
+              placeholder="Usuario"
+              value={form.user}
+              onChange={e => setForm({ ...form, user: e.target.value })}
+              style={{ width: '100%', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: 8, padding: '14px 14px 14px 48px', color: '#f3f4f6', fontSize: 15, boxSizing: 'border-box', outline: 'none' }}
+            />
+          </div>
+
+          <div style={{ marginBottom: 28, position: 'relative' }}>
+            <div style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }}>
+              <LockIcon />
+            </div>
+            <input
+              type="password"
+              placeholder="Contraseña"
+              value={form.pass}
+              onChange={e => setForm({ ...form, pass: e.target.value })}
+              style={{ width: '100%', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: 8, padding: '14px 14px 14px 48px', color: '#f3f4f6', fontSize: 15, boxSizing: 'border-box', outline: 'none' }}
+            />
+          </div>
+
+          {error && <p style={{ color: '#fc8181', fontSize: 13, marginBottom: 20, textAlign: 'center' }}>{error}</p>}
+
+          <button type="submit" style={{
+            width: '100%',
+            background: '#ed8936',
+            color: '#ffffff',
+            padding: '14px',
+            border: 'none',
+            borderRadius: 10,
+            fontSize: 15,
+            fontWeight: 600,
+            cursor: 'pointer',
+            marginBottom: 24,
+            boxShadow: '0 4px 6px -1px rgba(237, 137, 54, 0.3)'
+          }}>Entrar</button>
+
+          <div style={{ textAlign: 'center' }}>
+            <a href="#" style={{ color: '#a0aec0', fontSize: 14, textDecoration: 'underline', marginBottom: 16, display: 'inline-block' }}>Olvidé mi contraseña</a>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, color: '#cbd5e0', fontSize: 14 }}>
+              <input type="checkbox" id="remember" style={{ accentColor: '#ed8936', width: 16, height: 16 }} />
+              <label htmlFor="remember">Recordarme</label>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
+function AdminDashboard({ onLogout }) {
+  return (
+    <div style={{ height: '100vh', display: 'flex', background: '#09090b', color: '#fff', fontFamily: "'Inter',sans-serif" }}>
+      <aside style={{ width: 240, background: '#18181b', borderRight: '1px solid #27272a', display: 'flex', flexDirection: 'column', padding: '32px 24px' }}>
+        <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: 22, margin: 0 }}>Sergio</h2>
+        <nav style={{ marginTop: 48, flex: 1 }}>
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+            <li style={{ color: '#fff', padding: '12px 0', fontSize: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12 }}>📸 Fotos</li>
+            <li style={{ color: '#71717a', padding: '12px 0', fontSize: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12 }}>🖼️ Galerías</li>
+            <li style={{ color: '#71717a', padding: '12px 0', fontSize: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12 }}>📁 Categorías</li>
+            <li style={{ color: '#71717a', padding: '12px 0', fontSize: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12 }}>🗑️ Papelera</li>
+          </ul>
+        </nav>
+        <button onClick={onLogout} style={{ background: 'none', border: '1px solid #3f3f46', color: '#a1a1aa', padding: '10px', borderRadius: 6, fontSize: 12, cursor: 'pointer' }}>Cerrar Sesión</button>
+      </aside>
+      <main style={{ flex: 1, padding: 40, overflowY: 'auto' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
+          <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: 32, margin: 0 }}>Gestión de Fotos</h2>
+          <button style={{ background: '#d97706', color: '#000', padding: '10px 20px', borderRadius: 6, border: 'none', fontSize: 14, fontWeight: 600 }}>Añadir Fotos</button>
+        </div>
+
+        <div style={{ border: '2px dashed #27272a', borderRadius: 12, padding: 60, textAlign: 'center', background: '#18181b', marginBottom: 40 }}>
+          <p style={{ fontSize: 16, color: '#a1a1aa', margin: 0 }}>Arrastra aquí tus fotos para subirlas automáticamente</p>
+          <p style={{ fontSize: 12, color: '#71717a', marginTop: 8 }}>Máximo 20MB por foto. Formatos JPG, PNG, WebP.</p>
+        </div>
+
+        <h3 style={{ fontSize: 18, marginBottom: 20 }}>Galerías Recientes</h3>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 20 }}>
+          {siteData.galerias.slice(0, 4).map(g => (
+            <div key={g.id} style={{ background: '#18181b', borderRadius: 8, overflow: 'hidden', border: '1px solid #27272a' }}>
+              <img src={g.image} alt="" style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover' }} />
+              <div style={{ padding: 12 }}>
+                <p style={{ margin: 0, fontSize: 14 }}>{g.label}</p>
+                <p style={{ fontSize: 11, color: '#71717a', marginTop: 4 }}>12 fotos</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </main>
+    </div>
+  )
+}
+

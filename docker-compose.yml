@@ -1,0 +1,19 @@
+services:
+  fotosclick-spa:
+    image: nginx:alpine
+    container_name: fotosclick-spa
+    restart: always
+    volumes:
+      - ./dist:/usr/share/nginx/html:ro
+    networks:
+      - web
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=web"
+      - "traefik.http.routers.fotosclick-spa.rule=Host(`fotosclick.nomadprompters.es`)"
+      - "traefik.http.routers.fotosclick-spa.entrypoints=web,websecure"
+      - "traefik.http.routers.fotosclick-spa.tls.certresolver=myresolver"
+      - "traefik.http.services.fotosclick-spa.loadbalancer.server.port=80"
+networks:
+  web:
+    external: true
